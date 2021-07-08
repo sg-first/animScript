@@ -21,8 +21,14 @@ int main()
     scope.addFunction("&&", new Function({ Bool,Bool }, BuiltinFunc::And, Bool));
     scope.addFunction("||", new Function({ Bool,Bool }, BuiltinFunc::Or, Bool));
 
-    string program = "(a:Num,b:Num,c:Num)-> d=f1(a*c,b); e=f2(d,c)+a; a=(a+b)*c; return e;";
-    lexer l(program);
+    scope.addFunction("f1", new Function({ Num,Num }, BuiltinFunc::add, Num));
+
+    string code = "(a:Num,b:Num,c:Num)-> d=f1(a*c,b); e=f1(d,c)+a; a=(a+b)*c; return e;";
+    program p = parser::creatProgram(code, &scope);
+    NumNode* r = (NumNode*)p.call({ new NumNode(1),new NumNode(2),new NumNode(3) });
+
+    /*
+    lexer l(code);
     try
     {
         l.run();
@@ -34,11 +40,6 @@ int main()
 
     for (auto i : l.allToken)
         cout << i.first << " " << i.second << endl;
-
-    cout << endl << "parser:" << endl;
-
-    parser p(l.allToken, &scope);
-    auto tree = p.run();
-    if (tree == nullptr)
-        cout << "parser Error!" << endl;
+    */
+    cout << "ok";
 }
