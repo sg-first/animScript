@@ -50,17 +50,28 @@ enum callCheckMismatchType{NumberMismatch, TypeMisMatch};
 class callCheckMismatchExcep : public Excep
 {
 private:
-    int type;
+    unsigned int type;
 public:
-    callCheckMismatchExcep(int type) : Excep("callCheck Mismatch:"), type(type) { inform+=to_string(type); }
-    int getType() {return this->type;}
+    callCheckMismatchExcep(unsigned int type) : Excep("callCheck Mismatch:"), type(type) { inform+=to_string(type); }
+    unsigned int getType() {return this->type;}
 };
 
 class addSonExcep : public Excep
 {
 private:
-    int type;
+    unsigned int type;
 public:
-    addSonExcep(int type) : Excep("add Son Excep:"), type(type) { inform+=to_string(type); }
-    int getType() {return this->type;}
+    addSonExcep(unsigned int type) : Excep("add Son Excep:"), type(type) { inform+=to_string(type); }
+    unsigned int getType() {return this->type;}
+};
+
+
+class lexicalExcep : public Excep {
+public:
+    lexicalExcep(string inform) : Excep("lexical Error: "+inform) {}
+};
+
+class parseExcep : public Excep {
+public:
+    parseExcep(string inform) : Excep("parse Error: " + inform) {}
 };

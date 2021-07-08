@@ -41,7 +41,7 @@ public:
     ~program()
     {
         delete body;
-        delete s;
+        //delete s;
     }
 };
 
@@ -161,7 +161,7 @@ public:
                 return;
             }
             else
-                throw string("reduce error: " + this->buffer);
+                throw lexicalExcep("reduce error - " + this->buffer);
         }
     }
 };
@@ -344,7 +344,7 @@ private:
                     result = new BoolNode(false);
             }
             else
-                throw string("parse error: _exp literal case - Literal not added");
+                throw parseExcep("_exp literal case - Literal not added");
             this->i++;
         }
         else if (allToken[i].second == LETTER) //标识符开头
@@ -358,7 +358,7 @@ private:
             {
                 Function* f = this->scope->findFunction(allToken[i].first);
                 if (f == nullptr)
-                    throw string("parse error: _exp identifier case - Undefined identifier");
+                    throw parseExcep("_exp identifier case - Undefined identifier");
                 this->i++;
                 result = new FunNode(f);
                 auto sonNode = this->_ParaList();
@@ -367,7 +367,7 @@ private:
             }
         }
         else
-            throw string("parse error: _exp - Unexpected beginning of expression");
+            throw parseExcep("_exp - Unexpected beginning of expression");
 
         if (isOp(allToken[i])) //后面接运算符
         {
@@ -379,7 +379,7 @@ private:
                     op = this->scope->findFunction(allToken[i].first + "Bool");
             }
             if (op == nullptr)
-                throw string("parse error: _exp - The function entity corresponding to the operator was not found");
+                throw parseExcep("_exp - The function entity corresponding to the operator was not found");
             this->i++;
             FunNode* fn = new FunNode(op);
             //插子节点
@@ -416,7 +416,7 @@ private:
                     this->scope->addVariable(varName, v);
                 }
                 else
-                    throw string("parse error: _headParaList - Unrecognized type tag");
+                    throw parseExcep("_headParaList - Unrecognized type tag");
                 //fix: 支持新类型需要在这里修改parser
                 result.push_back(v);
                 this->i++; //越过类型标签
@@ -427,7 +427,7 @@ private:
             return result;
         }
         else
-            throw string("parse error: _headParaList - ( not found");
+            throw parseExcep("_headParaList - ( not found");
     }
 
     vector<BasicNode*> _ParaList()
@@ -447,7 +447,7 @@ private:
             return result;
         }
         else
-            throw string("parse error: _headParaList - ( not found");
+            throw parseExcep("_headParaList - ( not found");
     }
 
     BasicNode* _statementBlock()
@@ -485,7 +485,7 @@ private:
                     }
                 }
                 else
-                    throw string("parse error: _statementBlock assignment case - The assigned object must be a identifier");
+                    throw parseExcep("_statementBlock assignment case - The assigned object must be a identifier");
             }
         }
         return n;
@@ -501,7 +501,7 @@ private:
             return program(paraList, body, this->scope);
         }
         else
-            throw string("parse error: _program - Program syntax must be: (parameter list) -> function body");
+            throw parseExcep("_program - Program syntax must be: (parameter list) -> function body");
     }
 
 public:

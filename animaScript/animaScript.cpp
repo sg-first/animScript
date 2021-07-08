@@ -23,7 +23,7 @@ int main()
 
     scope.addFunction("f1", new Function({ Num,Num }, BuiltinFunc::add, Num));
 
-    string code = "(a:Num,b:Num,c:Num)-> d=f1(a*c,b); e=f1(d,c)+a; a=(a+b)*c; return e;";
+    string code = "(a:Num,b:Num,c:Num) -> d=f1(a*c,b); e=f1(d,c)+a; a=(a+b)*c; return e;";
     program p = parser::creatProgram(code, &scope);
     NumNode* r = (NumNode*)p.call({ new NumNode(1),new NumNode(2),new NumNode(3) });
 
