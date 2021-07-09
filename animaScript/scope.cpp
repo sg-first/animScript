@@ -22,6 +22,8 @@ void Scope::addVariable(string name, Variable *var)
 #ifdef READABLEGEN
     var->NAME=name;
 #endif
+    if (this->findVariable(name) != nullptr) //对同一个scope执行多个脚本的支持，省的每次都add
+        delete this->findVariable(name); //不用earse，因为马上就要填新的
     this->variableList[name]=var;
 }
 
