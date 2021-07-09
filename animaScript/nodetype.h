@@ -13,8 +13,8 @@ enum nodeType { Num, String, Bool,
 class BasicNode
 {
 public:
-    virtual nodeType getType()=0;
-    virtual void addNode(BasicNode* node) 
+    virtual nodeType getType() const = 0;
+    virtual void addNode(BasicNode* node)
     {
         assert(node != nullptr);
         this->sonNode.push_back(node);
@@ -32,7 +32,7 @@ typedef function<BasicNode*(vector<BasicNode*>&sonNode)>BE; //进行基础求值
 class nullNode : public BasicNode
 {
 public:
-    virtual nodeType getType() { return Null; }
+    virtual nodeType getType() const { return Null; }
     virtual void addNode(BasicNode*) { throw addSonExcep(Null); }
     virtual BasicNode* eval() {throw cannotEvaledExcep();}
 };
@@ -43,7 +43,7 @@ class PackNode : public BasicNode
 protected:
     T data;
 public:
-    virtual nodeType getType() { return TAG; }
+    virtual nodeType getType() const { return TAG; }
     virtual void addNode(BasicNode*) { throw addSonExcep(TAG); }
     virtual BasicNode* eval() { return this; }
     PackNode(T data) : data(data) {}

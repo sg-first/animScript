@@ -92,14 +92,15 @@ private:
             this->clear();
             return true;
         }
-        */
+        
         if (this->buffer == "then")
         {
             allToken.push_back(token("then", 3));
             this->clear();
             return true;
         }
-        else if (this->buffer == "return")
+        */
+        if (this->buffer == "return")
         {
             allToken.push_back(token("return", 1));
             this->clear();
@@ -129,7 +130,7 @@ private:
             this->clear();
             return true;
         }
-        //fix: 支持新类型需要在这里修改lexer
+        //支持新类型需要在这里修改lexer
         return false;
     }
 
@@ -257,12 +258,14 @@ private:
         }
         else if (this->program[i] == ';')
             REDUCE(";", 26)
-        else if (this->program[i] == '=')
+        else if (this->program[i] == '=' && this->program[i+1] != '=')
             REDUCE("=", 18)
         else if (this->program[i] == ',')
             REDUCE(",", 4)
         else if (this->program[i] == ':')
             REDUCE(":", 2)
+        else if (this->program[i] == '?')
+            REDUCE("?", 3)
         else if (this->program[i] == '(')
             REDUCE("(", 27)
         else if (this->program[i] == ')')
@@ -388,6 +391,21 @@ private:
             fn->addNode(expRet);
             return fn;
         }
+        else if (allToken[i].first == "?")
+        {
+            this->i++;
+            //result是条件，后面还有true和false两个exp
+            auto trueExp = this->_exp();
+            ProNode* truePro = new ProNode;
+            truePro->addNode(trueExp, true);
+            this->i++; //越过:
+            auto falseExp = this->_exp();
+            ProNode* falsePro = new ProNode;
+            falsePro->addNode(falseExp, true);
+
+            auto in = new IfNode(result, truePro, falsePro);
+            return in;
+        }
         else
         {
             return result;
@@ -417,7 +435,7 @@ private:
                 }
                 else
                     throw parseExcep("_headParaList - Unrecognized type tag");
-                //fix: 支持新类型需要在这里修改parser
+                //支持新类型需要在这里修改parser
                 result.push_back(v);
                 this->i++; //越过类型标签
                 if (allToken[i].first == ",")

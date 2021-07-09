@@ -62,28 +62,28 @@ public:
 
     static BasicNode* greater(vector<BasicNode*>& sonNode)
     {
-        return new NumNode(getNum(sonNode[0]) > getNum(sonNode[1]));
+        return new BoolNode(getNum(sonNode[0]) > getNum(sonNode[1]));
     }
 
     static BasicNode* greaterEqual(vector<BasicNode*>& sonNode)
     {
-        return new NumNode(getNum(sonNode[0]) >= getNum(sonNode[1]));
+        return new BoolNode(getNum(sonNode[0]) >= getNum(sonNode[1]));
     }
 
     static BasicNode* less(vector<BasicNode*>& sonNode)
     {
-        return new NumNode(getNum(sonNode[0]) < getNum(sonNode[1]));
+        return new BoolNode(getNum(sonNode[0]) < getNum(sonNode[1]));
     }
 
     static BasicNode* lessEqual(vector<BasicNode*>& sonNode)
     {
-        return new NumNode(getNum(sonNode[0]) <= getNum(sonNode[1]));
+        return new BoolNode(getNum(sonNode[0]) <= getNum(sonNode[1]));
     }
 
     static BasicNode* equal(vector<BasicNode*>& sonNode)
     {
         if(sonNode[0]->getType()==Num)
-            return new NumNode(getNum(sonNode[0]) == getNum(sonNode[1]));
+            return new BoolNode(getNum(sonNode[0]) == getNum(sonNode[1]));
         else
             return new BoolNode(getBool(sonNode[0]) == getBool(sonNode[1]));
     }
@@ -91,7 +91,7 @@ public:
     static BasicNode* notEqual(vector<BasicNode*>& sonNode)
     {
         if (sonNode[0]->getType() == Num)
-            return new NumNode(getNum(sonNode[0]) != getNum(sonNode[1]));
+            return new BoolNode(getNum(sonNode[0]) != getNum(sonNode[1]));
         else
             return new BoolNode(getBool(sonNode[0]) != getBool(sonNode[1]));
     }

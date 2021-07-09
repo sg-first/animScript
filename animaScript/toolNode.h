@@ -7,16 +7,18 @@ class copyHelp
 public:
     static BasicNode* copyNode(BasicNode* node);
     static BasicNode* copyVal(BasicNode* node);
-    static bool isLiteral(BasicNode* node);
-    static bool isLiteral(int type);
+    static bool isLiteral(const BasicNode* node) { return copyHelp::isLiteral(node->getType()); }
+    static bool isLiteral(nodeType type) { return (type == Num || type == String || type == Bool); } //warn:添加新的字面量要进行修改
     static void delTree(BasicNode* n);
+    static void delLiteral(BasicNode* n);
 };
 
 class evalHelp
 {
 public:
-    static void recursionEval(BasicNode*& node);
+    static BasicNode* literalCopyEval(BasicNode* node);
     static nodeType typeInfer(BasicNode*& node);
+    static set<nodeType> unionTypeInfer(BasicNode*& node);
 };
 
 class VarNode : public BasicNode
@@ -28,7 +30,7 @@ protected:
     bool ownershipFlag;
 
 public:
-    virtual nodeType getType() { return Var; }
+    virtual nodeType getType() const { return Var; }
     virtual void addNode(BasicNode*) { throw addSonExcep(Var); }
     virtual BasicNode* eval(); //字面量会拷贝
     virtual ~VarNode();
@@ -56,14 +58,14 @@ class ProNode : public BasicNode
 protected:
     vector<bool> isRet;
 public:
-    virtual nodeType getType() { return Pro; }
+    virtual nodeType getType() const { return Pro; }
     virtual BasicNode* eval();
     ProNode() {}
     ProNode(const ProNode& n) :BasicNode(n) {}
     //fix:该节点现在可以求值，实际应该做成逗号表达式一类的结构，支持PARTEVAL。但现在pro eval完了都释放，所以没啥用
     //BasicNode* getHeadNode() {return this->sonNode.at(0);}
     BasicNode* getSen(unsigned int sub) { return this->sonNode.at(sub); }
-    virtual void addNode(BasicNode* node) { throw addSonExcep(Null); }
+    virtual void addNode(BasicNode* node) { throw addSonExcep(Pro); }
     void addNode(BasicNode* node, bool isRet); //ProNode用这个添加子节点才是对的
     set<nodeType> getRetType();
 };
@@ -85,7 +87,7 @@ public:
     short getParnum() { return this->parnum; }
     const vector<nodeType>& getParType() { return this->parType; }
     nodeType getRetType() { return this->retType; }
-    BasicNode* eval(vector<BasicNode*>& sonNode);
+    BasicNode* eval(vector<BasicNode*> sonNode) const;
 
 #ifdef READABLEGEN
     string NAME;
@@ -98,7 +100,7 @@ protected:
     Function* funEntity; //所有权在scope，不在这里析构
 
 public:
-    virtual nodeType getType() { return Fun; }
+    virtual nodeType getType() const { return Fun; }
     virtual void addNode(BasicNode* node);
     virtual BasicNode* eval();
     FunNode(Function* funEntity) :funEntity(funEntity) {}
@@ -119,37 +121,18 @@ public:
 class AssignNode : public BasicNode
 {
 public:
-    virtual nodeType getType() { return Assign; }
-    virtual void addNode(BasicNode* node) { throw addSonExcep(Null); }
+    virtual nodeType getType() const { return Assign; }
+    virtual void addNode(BasicNode* node) { throw addSonExcep(Assign); }
     virtual BasicNode* eval();
     AssignNode(BasicNode* n1, BasicNode* n2); //直接在构造时添加子节点
 };
 
-
-class conditionalControlNode : public BasicNode
+class IfNode : public BasicNode
 {
-protected:
-    BasicNode* condition;
-    BasicNode* evalCondition();
 public:
-    conditionalControlNode(BasicNode* condition) :condition(condition) {}
-    conditionalControlNode(const conditionalControlNode& n) :BasicNode(n) {}
-
-#ifdef PARTEVAL
-    bool giveupEval;
-#endif
-};
-
-class IfNode : public conditionalControlNode
-{
-protected:
-    ProNode* truePro;
-    ProNode* falsePro;
-public:
-    virtual nodeType getType() { return If; }
+    virtual nodeType getType() const { return If; }
+    set<nodeType> getRetType();
     virtual void addNode(BasicNode*) { throw addSonExcep(If); }
     virtual BasicNode* eval();
-    IfNode(const IfNode& n);
-    IfNode(BasicNode* condition, ProNode* truePro, ProNode* falsePro) :conditionalControlNode(condition), truePro(truePro), falsePro(falsePro) {}
-    virtual ~IfNode();
+    IfNode(BasicNode* condition, BasicNode* truePro, BasicNode* falsePro);
 };

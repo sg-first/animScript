@@ -3,10 +3,12 @@
 BasicNode* copyHelp::copyVal(BasicNode* node) //（值类型）拷贝
 {
     //调用前应该对参数类型进行检查
-    if(node->getType()==Num)
+    if (node->getType() == Num)
         return new NumNode(*dynamic_cast<NumNode*>(node));
-    if(node->getType()==String)
+    if (node->getType() == String)
         return new StringNode(*dynamic_cast<StringNode*>(node));
+    if (node->getType() == Bool)
+        return new BoolNode(*dynamic_cast<BoolNode*>(node));
     if(node->getType()==Null)
         return new nullNode();
     //warn:支持更多具拷贝构造函数类型（目前都是字面量）后还需要在此处进行添加
@@ -38,17 +40,18 @@ void copyHelp::delTree(BasicNode *n)
     }
 }
 
+void copyHelp::delLiteral(BasicNode* n)
+{
+    if (n == nullptr)
+        return;
+    else if (copyHelp::isLiteral(n))
+        delete n;
+}
+
 BasicNode::BasicNode(const BasicNode &n)
 {
     for(BasicNode* i:n.sonNode)
         this->sonNode.push_back(copyHelp::copyNode(i));
-}
-
-IfNode::IfNode(const IfNode &n):conditionalControlNode(n)
-{
-    this->condition=copyHelp::copyNode(n.condition);
-    this->truePro=new ProNode(*(n.truePro));
-    this->falsePro=new ProNode(*(n.falsePro));
 }
 
 VarNode::VarNode(VarNode &n):BasicNode(n)
