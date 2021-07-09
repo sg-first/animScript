@@ -44,9 +44,8 @@ static bool isLiteral(nodeType type) { return (type == Num || type == String || 
 ```
 
 ### 定义构造函数
-注：也可以不用构造函数，直接用字面量构造。不过用字面量构造需要修改parser，让它可以解析这种字面量。具体看`parser.h`中的注释
 ``` cpp
-static BasicNode* makeVec4f(vector<BasicNode*>& sonNode)
+    static BasicNode* makeVec4f(vector<BasicNode*>& sonNode)
     {
         return new Vec4fNode(vec4f{ getNum(sonNode[0]),getNum(sonNode[1]),getNum(sonNode[2]),getNum(sonNode[3]) });
     }
@@ -56,8 +55,9 @@ static BasicNode* makeVec4f(vector<BasicNode*>& sonNode)
         auto v = dynamic_cast<Vec4fNode*>(sonNode[0])->getData();
         auto r = v.f1;
         return new NumNode(r);
-}
+    }
 ```
+注：也可以不用构造函数，直接用字面量构造。不过用字面量构造需要修改parser，让它可以解析这种字面量。具体看`parser.h`中的注释
 
 ### 注册构造函数
 ``` cpp
