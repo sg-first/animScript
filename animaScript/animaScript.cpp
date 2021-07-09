@@ -3,6 +3,40 @@
 #include "parser.h"
 #include "funinterface.h"
 
+void test(Scope* s)
+{
+    {
+        string code = "(aaa:Num,b1:Num,c:Num) -> d=f1(aaa*c,b1); e=f1(d,c)-aaa; a=(aaa+b1)*c; d=e/a; return d*9;";
+        program p = parser::creatProgram(code, s);
+        NumNode* r = (NumNode*)p.call({ new NumNode(1),new NumNode(2),new NumNode(3) });
+        assert(r->getData() == 7);
+        delete r;
+        r = (NumNode*)p.call({ new NumNode(2),new NumNode(2),new NumNode(2) });
+        assert(r->getData() == 6.75);
+        delete r;
+    }
+    {
+        string code = "(aaa:Num,b1:Num,c:Num) -> d=f1(aaa*c,b1); e=f1(d,c)-aaa; return ((d>5)||(e==7)) ? 1 : 2;";
+        program p = parser::creatProgram(code, s);
+        NumNode* r = (NumNode*)p.call({ new NumNode(1),new NumNode(2),new NumNode(3) });
+        assert(r->getData() == 1);
+        delete r;
+        r = (NumNode*)p.call({ new NumNode(2),new NumNode(2),new NumNode(2) });
+        assert(r->getData() == 1);
+        delete r;
+    }
+    {
+        string code = "(a:Bool,b:Bool)->return (a==b)?1:2;";
+        program p = parser::creatProgram(code, s);
+        NumNode* r = (NumNode*)p.call({ new BoolNode(true),new BoolNode(true) });
+        assert(r->getData() == 1);
+        delete r;
+        r = (NumNode*)p.call({ new BoolNode(true),new BoolNode(false) });
+        assert(r->getData() == 2);
+        delete r;
+    }
+}
+
 int main()
 {
     Scope scope;
@@ -23,28 +57,5 @@ int main()
 
     scope.addFunction("f1", new Function({ Num,Num }, BuiltinFunc::add, Num));
 
-    string code = "(aaa:Num,b1:Num,c:Num) -> d=f1(aaa*c,b1); e=f1(d,c)-aaa; a=(aaa+b1)*c; d=e/a; return d;";
-    string code2 = "(aaa:Num,b1:Num,c:Num) -> d=f1(aaa*c,b1); e=f1(d,c)-aaa; return ((d>5)||(e==7)) ? 1 : 2;";
-    program p = parser::creatProgram(code, &scope);
-    NumNode* r = (NumNode*)p.call({ new NumNode(1),new NumNode(2),new NumNode(3) });
-    r = (NumNode*)p.call({ new NumNode(2),new NumNode(2),new NumNode(2) });;
-    program p2 = parser::creatProgram(code2, &scope);
-    r = (NumNode*)p2.call({ new NumNode(1),new NumNode(2),new NumNode(3) });
-    r = (NumNode*)p2.call({ new NumNode(2),new NumNode(2),new NumNode(2) });
-
-    /*
-    lexer l(code);
-    try
-    {
-        l.run();
-    }
-    catch (string s)
-    {
-        cout << s << endl;
-    }
-
-    for (auto i : l.allToken)
-        cout << i.first << " " << i.second << endl;
-    */
-    cout << "ok";
+    test(&scope);
 }
