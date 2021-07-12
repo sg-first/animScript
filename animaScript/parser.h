@@ -255,6 +255,8 @@ private:
                 //后面的exp留给常规流程处理
                 return true;
             }
+            else
+                return false;
         }
         else if (this->program[i] == ';')
             REDUCE(";", 26)

@@ -52,6 +52,7 @@ void test(Scope* s)
     testOnce(s, "(a:Num,b:Num)-> return (a+(b*3))*4;", { new NumNode(3),new NumNode(3) }, 48);
     testOnce(s, "(a:Num,b:Num)-> return ((a+b)*3)*4;", { new NumNode(3),new NumNode(3) }, 72);
     testOnce(s, "(a:Num,b:Num)-> return (a-(b*3))-4;", { new NumNode(3),new NumNode(3) }, -10);
+    testOnce(s, "(a:Bool,b:Bool)-> d=1; c=(a==b)?(d+1):(d+2); return c+1;", { new BoolNode(true),new BoolNode(false) }, 4);
 }
 
 int main()
