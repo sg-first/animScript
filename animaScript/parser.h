@@ -199,10 +199,6 @@ private:
             REDUCE("*", 13)
         else if (this->program[i] == '/')
             REDUCE("/", 13)
-        else if (this->program[i] == '>')
-            REDUCE(">", 20)
-        else if (this->program[i] == '<')
-            REDUCE("<", 20)
         else if (lexer::test2Str(this->program, "<=", this->i))
         {
             this->reduce();
@@ -221,6 +217,10 @@ private:
             this->allToken.push_back(token("==", 20));
             return true;
         }
+        else if (this->program[i] == '>')
+            REDUCE(">", 20)
+        else if (this->program[i] == '<')
+            REDUCE("<", 20)
         else if (lexer::test2Str(this->program, "!=", this->i))
         {
             this->reduce();
