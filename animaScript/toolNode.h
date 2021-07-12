@@ -8,7 +8,7 @@ public:
     static BasicNode* copyNode(BasicNode* node);
     static BasicNode* copyVal(BasicNode* node);
     static bool isLiteral(const BasicNode* node) { return copyHelp::isLiteral(node->getType()); }
-    static bool isLiteral(nodeType type) { return (type == Num || type == String || type == Bool); } //warn:添加新的字面量要进行修改
+    static bool isLiteral(nodeType type) { return (type == Num || type == String || type == Bool || type==Vec4f); } //warn:添加新的值类型要进行修改
     static void delTree(BasicNode* n);
     static void delLiteral(BasicNode* n);
 };

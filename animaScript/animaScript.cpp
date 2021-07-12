@@ -3,6 +3,14 @@
 #include "parser.h"
 #include "funinterface.h"
 
+void testOnce(Scope* s, string code, vector<BasicNode*> argu, double val)
+{
+    program p = parser::creatProgram(code, s);
+    NumNode* r = (NumNode*)p.call(argu);
+    assert(r->getData() == val);
+    delete r;
+}
+
 void test(Scope* s)
 {
     {
@@ -35,6 +43,15 @@ void test(Scope* s)
         assert(r->getData() == 2);
         delete r;
     }
+    testOnce(s, "(a:Bool,b:Bool)-> c=(a==b)?1:2; return c+1;", { new BoolNode(true),new BoolNode(false) }, 3);
+    testOnce(s, "(a:Num,b:Num,c:Num,d:Num)-> vec=makeVec4f(a,b,c,d); return getVec4f_1(vec);", { new NumNode(1),new NumNode(2),new NumNode(3),new NumNode(4) }, 1);
+    testOnce(s, "(a:Num,b:Num)-> c=(a>=b)?1:2; return c+1;", { new NumNode(3),new NumNode(3) }, 2);
+    testOnce(s, "(a:Num,b:Num)-> c=(a<=b)?1:2; return c+1;", { new NumNode(3),new NumNode(3) }, 2);
+    testOnce(s, "(a:Num,b:Num)-> return a+b+3+4;", { new NumNode(3),new NumNode(3) }, 13);
+    testOnce(s, "(a:Num,b:Num)-> return a*b*3*4;", { new NumNode(3),new NumNode(3) }, 108);
+    testOnce(s, "(a:Num,b:Num)-> return (a+(b*3))*4;", { new NumNode(3),new NumNode(3) }, 48);
+    testOnce(s, "(a:Num,b:Num)-> return ((a+b)*3)*4;", { new NumNode(3),new NumNode(3) }, 72);
+    testOnce(s, "(a:Num,b:Num)-> return (a-(b*3))-4;", { new NumNode(3),new NumNode(3) }, -10);
 }
 
 int main()
@@ -47,7 +64,7 @@ int main()
     scope.addFunction("<", new Function({ Num,Num }, BuiltinFunc::less, Bool));
     scope.addFunction("<=", new Function({ Num,Num }, BuiltinFunc::lessEqual, Bool));
     scope.addFunction(">", new Function({ Num,Num }, BuiltinFunc::greater, Bool));
-    scope.addFunction(">=", new Function({ Num,Num }, BuiltinFunc::greater, Bool));
+    scope.addFunction(">=", new Function({ Num,Num }, BuiltinFunc::greaterEqual, Bool));
     scope.addFunction("==", new Function({ Num,Num }, BuiltinFunc::equal, Bool));
     scope.addFunction("!=", new Function({ Num,Num }, BuiltinFunc::notEqual, Bool));
     scope.addFunction("==Bool", new Function({ Bool,Bool }, BuiltinFunc::equal, Bool));
@@ -56,6 +73,8 @@ int main()
     scope.addFunction("||", new Function({ Bool,Bool }, BuiltinFunc::Or, Bool));
 
     scope.addFunction("f1", new Function({ Num,Num }, BuiltinFunc::add, Num));
+    scope.addFunction("makeVec4f", new Function({ Num,Num,Num,Num }, BuiltinFunc::makeVec4f, Vec4f));
+    scope.addFunction("getVec4f_1", new Function({ Vec4f }, BuiltinFunc::getVec4f_1, Num));
 
     test(&scope);
 }

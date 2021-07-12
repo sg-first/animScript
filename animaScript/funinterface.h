@@ -4,12 +4,12 @@
 class BuiltinFunc
 {
 private:
-    static double getNum(BasicNode* node)
+    static float getNum(BasicNode* node)
     {
         return dynamic_cast<NumNode*>(node)->getData();
     }
 
-    static double getBool(BasicNode* node)
+    static bool getBool(BasicNode* node)
     {
         return dynamic_cast<BoolNode*>(node)->getData();
     }
@@ -104,5 +104,17 @@ public:
     static BasicNode* Or(vector<BasicNode*>& sonNode)
     {
         return new BoolNode(getBool(sonNode[0]) || getBool(sonNode[1]));
+    }
+
+    static BasicNode* makeVec4f(vector<BasicNode*>& sonNode)
+    {
+        return new Vec4fNode(vec4f{ getNum(sonNode[0]),getNum(sonNode[1]),getNum(sonNode[2]),getNum(sonNode[3]) });
+    }
+
+    static BasicNode* getVec4f_1(vector<BasicNode*>& sonNode)
+    {
+        auto v = dynamic_cast<Vec4fNode*>(sonNode[0])->getData();
+        auto r = v.f1;
+        return new NumNode(r);
     }
 };

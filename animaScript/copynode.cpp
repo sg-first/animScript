@@ -9,6 +9,8 @@ BasicNode* copyHelp::copyVal(BasicNode* node) //（值类型）拷贝
         return new StringNode(*dynamic_cast<StringNode*>(node));
     if (node->getType() == Bool)
         return new BoolNode(*dynamic_cast<BoolNode*>(node));
+    if (node->getType() == Vec4f)
+        return new Vec4fNode(*dynamic_cast<Vec4fNode*>(node));
     if(node->getType()==Null)
         return new nullNode();
     //warn:支持更多具拷贝构造函数类型（目前都是字面量）后还需要在此处进行添加

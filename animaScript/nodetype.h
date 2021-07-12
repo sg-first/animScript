@@ -7,7 +7,7 @@
 #include <assert.h>
 using namespace std;
 
-enum nodeType { Num, String, Bool,
+enum nodeType { Num, String, Bool, Vec4f,
     Var, Pro, Fun, If, Null, Assign };
 
 class BasicNode
@@ -51,6 +51,15 @@ public:
     T getData() const { return this->data; }
 };
 
+struct vec4f
+{
+    float f1;
+    float f2;
+    float f3;
+    float f4;
+};
+
 typedef PackNode<double, Num> NumNode;
 typedef PackNode<string, String> StringNode;
 typedef PackNode<bool, Bool> BoolNode;
+typedef PackNode<vec4f, Vec4f> Vec4fNode;
